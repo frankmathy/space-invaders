@@ -66,8 +66,86 @@ class Projectile {
     }
 }
 
+class Invader {
+    constructor({ position }) {
+
+        this.velocity = {
+            x: 0,
+            y: 0
+        }
+
+        this.image = new Image();
+        this.image.src = 'img/invader.png';
+        this.image.onload = () => {
+            const scale = 0.5;
+            this.width = 100 * scale;
+            this.height = 100 * scale;
+            this.position = {
+                x: position.x,
+                y: position.y
+            }
+        }
+    }
+
+    draw() {
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+
+    update({ velocity }) {
+        if (this.image && this.position) {
+            this.draw();
+            this.position.x += velocity.x;
+            this.position.y += velocity.y;
+        }
+    }
+}
+
+class Grid {
+    constructor() {
+        this.invaderSize = 50;
+        this.position = {
+            x: 0,
+            y: 0
+        }
+        this.velocity = {
+            x: 3,
+            y: 0
+        }
+
+        this.invaders = [];
+
+        const rows = Math.floor(Math.random() * 5 + 2);
+        const columns = Math.floor(Math.random() * 10 + 5);
+
+        this.width = columns * this.invaderSize;
+
+        for (let x = 0; x < columns; x++) {
+            for (let y = 0; y < rows; y++) {
+                this.invaders.push(new Invader({
+                    position: {
+                        x: x * this.invaderSize,
+                        y: y * this.invaderSize
+                    }
+                }))
+            }
+        }
+    }
+
+    update() {
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.velocity.y = 0;
+
+        if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
+            this.velocity.x = -this.velocity.x;
+            this.velocity.y = this.invaderSize;
+        }
+    }
+}
+
 const player = new Player();
 const projectiles = [];
+const grids = [new Grid()];
 
 const keys = {
     a: {
@@ -90,6 +168,13 @@ function animate() {
         } else {
             projectile.update();
         }
+    })
+
+    grids.forEach(grid => {
+        grid.update();
+        grid.invaders.forEach((invader) => {
+            invader.update({ velocity: grid.velocity });
+        })
     })
 
     if (keys.a.pressed && player.position.x > 0) {
