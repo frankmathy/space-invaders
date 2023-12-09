@@ -12,6 +12,8 @@ class Player {
             y: 0
         }
 
+        this.rotation = 0;
+
         this.image = new Image();
         this.image.src = 'img/spaceship.png';
         this.image.onload = () => {
@@ -26,7 +28,12 @@ class Player {
     }
 
     draw() {
+        c.save();
+        c.translate(player.position.x + player.width / 2, player.position.y) + player.height / 2;
+        c.rotate(this.rotation);
+        c.translate(-player.position.x - player.width / 2, -player.position.y) - player.height / 2;
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+        c.restore();
     }
 
     update() {
@@ -58,10 +65,13 @@ function animate() {
 
     if (keys.a.pressed && player.position.x > 0) {
         player.velocity.x = -7;
+        player.rotation = -0.15;
     } else if (keys.d.pressed && player.position.x <= canvas.width - player.width) {
         player.velocity.x = 7;
+        player.rotation = 0.15;
     } else {
         player.velocity.x = 0;
+        player.rotation = 0;
     }
 }
 
