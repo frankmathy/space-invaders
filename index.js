@@ -15,7 +15,7 @@ class Player {
         this.image = new Image();
         this.image.src = 'img/spaceship.png';
         this.image.onload = () => {
-            const scale = 0.15;
+            const scale = 0.5;
             this.width = 100 * scale;
             this.height = 100 * scale;
             this.position = {
@@ -38,25 +38,55 @@ class Player {
 }
 
 const player = new Player();
+const keys = {
+    a: {
+        pressed: false
+    },
+    d: {
+        pressed: false
+    },
+    space: {
+        pressed: false
+    },
+}
 
 function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = 'black';
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.update();
+
+    if (keys.a.pressed && player.position.x > 0) {
+        player.velocity.x = -7;
+    } else if (keys.d.pressed && player.position.x <= canvas.width - player.width) {
+        player.velocity.x = 7;
+    } else {
+        player.velocity.x = 0;
+    }
 }
 
 animate();
 
 addEventListener('keydown', ({ key }) => {
-    console.log(key)
-    /*switch (key) {
+    switch (key) {
         case 'a':
-            player.velocity.x = -5;
+            keys.a.pressed = true;
+            break;
         case 'd':
-            player.velocity.x = 5;
+            keys.d.pressed = true;
             break;
         case ' ':
             break;
-    }*/
+    }
+})
+
+addEventListener('keyup', ({ key }) => {
+    switch (key) {
+        case 'a':
+            keys.a.pressed = false;
+            break;
+        case 'd':
+            keys.d.pressed = false;
+            break;
+    }
 })
