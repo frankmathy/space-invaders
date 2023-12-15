@@ -264,8 +264,8 @@ function animate() {
   invaderProjectiles.forEach((invaderProjectile, index) => {
     if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
       setTimeout(() => {
-        invaderProjectiles.slice(index, 1);
-      });
+        invaderProjectiles.splice(index, 1);
+      }, 0);
     } else {
       invaderProjectile.update();
     }
@@ -278,6 +278,7 @@ function animate() {
       setTimeout(() => {
         invaderProjectiles.splice(index, 1);
       });
+      console.log("Player hit by particle");
       createParticles({
         object: player,
         color: "white",
