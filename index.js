@@ -28,18 +28,10 @@ class Player {
 
   draw() {
     c.save();
-    c.translate(player.position.x + player.width / 2, player.position.y) +
-      player.height / 2;
+    c.translate(player.position.x + player.width / 2, player.position.y) + player.height / 2;
     c.rotate(this.rotation);
-    c.translate(-player.position.x - player.width / 2, -player.position.y) -
-      player.height / 2;
-    c.drawImage(
-      this.image,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height
-    );
+    c.translate(-player.position.x - player.width / 2, -player.position.y) - player.height / 2;
+    c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     c.restore();
   }
 
@@ -114,13 +106,7 @@ class Invader {
   }
 
   draw() {
-    c.drawImage(
-      this.image,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height
-    );
+    c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
   }
 
   update({ velocity }) {
@@ -215,9 +201,29 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
 
+  invaderProjectiles.forEach((invaderProjectile, index) => {
+    if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
+      setTimeout(() => {
+        invaderProjectiles.slice(index, 1);
+      });
+    } else {
+      invaderProjectile.update();
+    }
+
+    if (
+      invaderProjectile.position.y + invaderProjectile.height >= player.position.y &&
+      invaderProjectile.position.x + invaderProjectile.width >= player.position.x &&
+      invaderProjectile.position.x <= player.position.x + player.width
+    ) {
+      console.log("You lose");
+    }
+  });
+
   projectiles.forEach((projectile, index) => {
     if (projectile.position.y + projectile.radius <= 0) {
-      projectiles.splice(index, 1);
+      setTimeout(() => {
+        projectiles.splice(index, 1);
+      }, 0);
     } else {
       projectile.update();
     }
@@ -225,16 +231,19 @@ function animate() {
 
   grids.forEach((grid, gridIndex) => {
     grid.update();
+
+    if (frames % 100 === 0 && grid.invaders.length > 0) {
+      grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot();
+    }
+
     grid.invaders.forEach((invader, i) => {
       invader.update({ velocity: grid.velocity });
       projectiles.forEach((projectile, j) => {
         if (
-          projectile.position.y - projectile.radius <=
-            invader.position.y + invader.height &&
+          projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
           projectile.position.y + projectile.radius >= invader.position.y &&
           projectile.position.x + projectile.radius >= invader.position.x &&
-          projectile.position.x - projectile.radius <=
-            invader.position.x + invader.width
+          projectile.position.x - projectile.radius <= invader.position.x + invader.width
         ) {
           setTimeout(() => {
             const invaderFound = grid.invaders.find((i) => i === invader);
@@ -247,10 +256,7 @@ function animate() {
               if (grid.invaders.length > 0) {
                 const firstInvader = grid.invaders[0];
                 const lastInvader = grid.invaders[grid.invaders.length - 1];
-                grid.width =
-                  lastInvader.position.x -
-                  firstInvader.position.x +
-                  lastInvader.width;
+                grid.width = lastInvader.position.x - firstInvader.position.x + lastInvader.width;
                 grid.position.ax = firstInvader.position.x;
               } else {
                 grids.splice(gridIndex, 1);
@@ -265,10 +271,7 @@ function animate() {
   if (keys.a.pressed && player.position.x > 0) {
     player.velocity.x = -7;
     player.rotation = -0.15;
-  } else if (
-    keys.d.pressed &&
-    player.position.x <= canvas.width - player.width
-  ) {
+  } else if (keys.d.pressed && player.position.x <= canvas.width - player.width) {
     player.velocity.x = 7;
     player.rotation = 0.15;
   } else {
@@ -277,7 +280,6 @@ function animate() {
   }
 
   if (frames < 0 || frames > randomInterval) {
-    console.log("Created new invaders at " + frames);
     frames = 0;
     randomInterval = Math.floor(Math.random() * 500 + 500);
     grids.push(new Grid());
