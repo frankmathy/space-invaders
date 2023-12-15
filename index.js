@@ -183,8 +183,20 @@ function animate() {
                     projectile.position.x + projectile.radius >= invader.position.x &&
                     projectile.position.x - projectile.radius <= invader.position.x + invader.width) {
                     setTimeout(() => {
-                        grid.invaders.splice(i, 1);
-                        projectiles.splice(j, 1);
+                        const invaderFound = grid.invaders.find((i) => i === invader);
+                        const projectileFound = projectiles.find((p) => p === projectile);
+
+                        if (invaderFound && projectileFound) {
+                            grid.invaders.splice(i, 1);
+                            projectiles.splice(j, 1);
+
+                            if (grid.invaders.length > 0) {
+                                const firstInvader = grid.invaders[0];
+                                const lastInvader = grid.invaders[grid.invaders.length - 1];
+                                grid.width = lastInvader.position.x - firstInvader.position.x + lastInvader.width;
+                                grid.position.ax = firstInvader.position.x;
+                            }
+                        }
                     }, 0)
                 }
             })
