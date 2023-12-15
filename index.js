@@ -4,6 +4,9 @@
 const canvas = document.querySelector("canvas");
 const scoreEl = document.querySelector("#scoreEl");
 const c = canvas.getContext("2d");
+const shootSound = document.getElementById("audio-shoot");
+const enemyShootSound = document.getElementById("audio-enemy-shoot");
+const explodeSound = document.getElementById("audio-explode");
 
 canvas.width = 1024;
 canvas.height = 576;
@@ -155,6 +158,7 @@ class Invader {
   }
 
   shoot() {
+    enemyShootSound.play();
     invaderProjectiles.push(
       new InvaderProjectile({
         position: {
@@ -322,6 +326,7 @@ function animate() {
         object: player,
         color: "white",
       });
+      explodeSound.play();
     }
   });
 
@@ -356,6 +361,7 @@ function animate() {
             const projectileFound = projectiles.find((p) => p === projectile);
 
             if (invaderFound && projectileFound) {
+              explodeSound.play();
               score += 100;
               scoreEl.innerHTML = score;
               createParticles({
@@ -414,6 +420,7 @@ addEventListener("keydown", ({ key }) => {
       keys.d.pressed = true;
       break;
     case " ":
+      shootSound.play();
       projectiles.push(
         new Projectile({
           position: {
