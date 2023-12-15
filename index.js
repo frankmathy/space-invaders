@@ -2,10 +2,11 @@
 // See tutoral: https://youtu.be/MCVU0w73uKI
 
 const canvas = document.querySelector("canvas");
+const scoreEl = document.querySelector("#scoreEl");
 const c = canvas.getContext("2d");
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 1024;
+canvas.height = 576;
 
 class Player {
   constructor() {
@@ -235,6 +236,7 @@ let game = {
   over: false,
   active: true,
 };
+let score = 0;
 
 for (let i = 0; i < 100; i++) {
   particles.push(
@@ -354,6 +356,8 @@ function animate() {
             const projectileFound = projectiles.find((p) => p === projectile);
 
             if (invaderFound && projectileFound) {
+              score += 100;
+              scoreEl.innerHTML = score;
               createParticles({
                 object: invader,
               });
