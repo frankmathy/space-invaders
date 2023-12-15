@@ -93,7 +93,7 @@ class Particle {
     this.draw();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
-    if (this.addfades) {
+    if (this.fades) {
       this.opacity -= 0.01;
     }
   }
@@ -248,7 +248,7 @@ for (let i = 0; i < 100; i++) {
   );
 }
 
-function createParticles({ object, color, fades }) {
+function createParticles({ object, color }) {
   for (let i = 0; i < 15; i++) {
     particles.push(
       new Particle({
@@ -262,7 +262,7 @@ function createParticles({ object, color, fades }) {
         },
         radius: 1 + Math.random() * 3,
         color: color || "#BAA0DE",
-        fades: fades,
+        fades: true,
       })
     );
   }
@@ -345,7 +345,6 @@ function animate() {
             if (invaderFound && projectileFound) {
               createParticles({
                 object: invader,
-                fades: true,
               });
 
               grid.invaders.splice(i, 1);
